@@ -1,0 +1,53 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Category: {{category}}</h2>
+    {% if messagelog %}
+    <div class="alert alert-danger" role="alert">
+        {{messagelog}}
+      </div>
+      {% endif %}
+    {% for item,details in ActiveList.items  %}
+    
+        <div class="card mb-3" style="max-width: 540px;" >
+            
+            <div class="row no-gutters">
+      
+            <div class="col-md-4">
+
+                <img src={{details.Item_photo.url}} class="card-img" alt="...">
+            </div>
+            <div class="col-md-7">
+                <a href="/{{item}}" style="text-decoration: none; color: #000;" > 
+                <div class="card-body">
+                    
+                <h5 class="card-title">{{item}}</h5>
+            
+                <p class="card-text"><strong>Description: </strong>{{details.Item_description}}</p>
+                <p class="card-text"><strong>Current Price:</strong> Rs {{details.Item_current_price}}</p>
+                <p class="card-text"><strong>Category: </strong>{{details.Category}}</p>
+                <p class="card-text"><small class="text-muted">{{details.Created_date}}</small></p>
+            </div>
+            </a>
+            </div>
+                <a href="/addwatchlist/{{item}}" >
+                <div  class="watchicon" onclick="bookmark()" >
+                    
+                    {% if details.isbookmarked %}
+                        
+                         <i id="bookmarkicon{{item.Item}}" class="bi bi-bookmark-fill"  ></i>
+                    {% else %}
+                    
+                    <i id="bookmarkicon{{item.Item}}" class="bi bi-bookmark"  ></i>
+                    {% endif %}
+                </div>
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="alert alert-danger" role="alert">
+            {{message}}
+          </div>
+    {% endfor %}
+          
+{% endblock %}

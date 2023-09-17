@@ -1,0 +1,74 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Create Listings</h2>
+        {% if user.is_authenticated %}
+            {% if message is not None %}
+            <div class="alert alert-danger" role="alert">
+               {{message}}
+              </div>
+            {% endif %}
+            <form action="{% url 'createlisting' %}" method="post" enctype="multipart/form-data" >
+                {% csrf_token %}
+                <div class="createlist_form" style="padding: 15px;">
+                <div class="form-group row">
+                    <label for="item_name" class="col-sm-2">Item Name</label>
+                    <div class="col-sm-5">
+                        <input class="form-control " autofocus type="text" name="item_name" placeholder="Enter the Item Name">
+                    </div>
+                    
+                </div>
+                <div class="form-group row">
+                    <label for="item_description" class="col-sm-2">Item description</label>
+                    <div class="col-sm-5">
+                        <input class="form-control " autofocus type="text" name="item_description" placeholder="Describe the item">
+                    </div>
+                    
+                </div>
+              
+                <div class="form-group row">
+                    <label for="start_price" class="col-sm-2">Starting bid price</label>
+                    <div class="col-sm-5">
+                        <input class="form-control " autofocus type="text" name="start_price" placeholder="Starting bid price">
+                    </div>
+                    
+                </div>
+                <div class="form-group row">
+                    <label for="Category" class="col-sm-2">Category</label>
+                    <div class="col-sm-5">
+                        <input class="form-control " autofocus type="text" name="Category" list="Category" placeholder="Category"/>
+                        <datalist   id="Category" >
+                            {% for values in categories %}
+                            <option value={{values}}></option>
+                            {% endfor %}
+                        </datalist>
+                    </div>
+                    
+                </div>
+                <div class="form-group row">
+                    <label for="item_image" class="col-sm-2">Item Image</label>
+                    <div class="col-sm-5">
+                        <input class="form-control " autofocus type="file" accept="image/*" name="item_image"  >
+                    </div>
+                    
+                </div>
+                <div class="form-group row">
+                    
+                    <div class="col-sm-5">
+                        <input class="form-control " autofocus type="hidden" name="creator_name" value="{{user.username}}" placeholder="Starting bid price">
+                    </div>
+                    
+                </div>
+                <input class="btn btn-primary" type="submit" value="Create ">
+            </div>
+            </form>
+        
+            {% else %}
+            <div class="alert alert-danger" role="alert">
+                Please Login!!
+              </div>
+        {% endif %}
+
+
+
+{% endblock %}

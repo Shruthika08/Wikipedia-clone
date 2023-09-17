@@ -1,0 +1,106 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>{{Item.Item}}</h2>
+    
+        <div class="card mb-4" >
+            <div class="row no-gutters">
+            <div class="col-md-4">
+                <img src={{Item.Item_photo.url}} class="card-img" alt="...">
+            </div>
+            <div class="col-md-7">
+                <div class="card-body">
+                <h5 class="card-title">{{Item.Item}}</h5>
+                <p class="card-text"><strong>Description: </strong>{{Item.Item_description}}</p>
+                <p class="card-text"><strong>Category: </strong>{{Item.Category}}</p>
+                <p class="card-text"><strong>Current Price: </strong>{{Item.Item_current_price}} <span style="font-size: x-small;"><em> Highest bidder name is <strong>{{highest_bidder}}</strong></em></span></p>
+                <p class="card-text"><strong>Listed By: </strong>{{Item.Creator_name}}</p>
+                <p class="card-text"><small class="text-muted">{{Item.Created_date}}</small></p>
+               {% if user.username == Item.Creator_name and not messageclosebid %}
+                <p class="card-text"><a href="/closebid/{{Item.Item}}"><button class="btn btn-danger">End Auction</button> </a></p>
+                {% endif %}
+                {% if messageclosebid %}
+                <div class="alert alert-primary" role="alert">
+                Auctions for this item is closed. The item goes to the highest bidder <strong>{{messageclosebid}}</strong> 
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+            <a href="/addwatchlist/{{Item.Item}}" >
+                <div  class="watchicon" >
+                    
+                    {% if isbookmarked %}
+                        
+                         <i id="bookmarkicon{{Item.Item}}" class="bi bi-bookmark-fill"  ></i>
+                    {% else %}
+                    
+                    <i id="bookmarkicon{{Item.Item}}" class="bi bi-bookmark"  ></i>
+                    {% endif %}
+                </div>
+                </a>
+            </div>
+            {% if not messageclosebid %}
+                <form action="{% url 'updatebid' %}" method="POST" class="col-md-5">
+                    {% csrf_token %}
+                    <div class="mb-3" style="padding: 5px;">
+                    <label for="bid" class="form-label">Bid(in Rs)</label>
+                    <input type="number" name="new_price" class="form-control" id="bid" placeholder="{{Item.Item_current_price}}" value="{{Item.Item_current_price}}">
+                    <input type="hidden" name="item_name" value="{{Item.Item}}">
+                    
+                </form>
+                <input type="submit" value="Place Bid" class="btn btn-primary" style="position: relative; top: 10px;">
+            {% endif %}
+            </div>        
+        </div>
+    {% if not user.is_authenticated and message is not None %}
+        <div class="alert alert-danger" role="alert">
+        Please Login
+        </div>
+    {% endif %}
+    
+    {% if user.is_authenticated and messageper %}
+    <div class="alert alert-danger" role="alert">
+        {{messageper}}
+        </div>
+    {% endif %}
+    <div class="card mb-4">
+        <div class="col ">
+            <h4 style="margin: 5px;">Comments:</h4>
+        </div>
+        
+        <form action="{% url 'comment' %}" method="post" enctype="multipart/form-data" >
+            {% csrf_token %}
+            <div class="comment_form" style="padding: 15px;">
+                {% for comment in comments %}
+                <div class="form-group row">
+                    <span class="col" style="max-width:fit-content"><strong>{{comment.Commenter}}:</strong></span>
+                    <div class="col-sm-7">
+                        <input class="form-control-plaintext " type="text" name="{{comment.Commenter}}" value="{{comment.Item_comment}}" readonly>
+                    </div>
+                    
+                </div>
+                {% endfor %}
+            
+                <div class="form-group row">
+                    {% if user.is_authenticated %}
+                    <span class="col" style="max-width:fit-content"><strong>{{user.username}}:</strong></span>
+                    {% endif %}
+                    <div class="col-sm-5">
+                        {% if user.is_authenticated %}
+                        <input class="form-control " autofocus type="text" name="comment"  placeholder="comment here">
+                        {% else %}
+                        <input class="form-control " autofocus type="text" name="comment"  value="Login to Comment" readonly>
+                        {% endif %}
+
+                    </div>
+                    <input type="hidden" name="item" value="{{Item.Item}}" >
+                </div>
+                {% if user.is_authenticated %}
+                <input class="btn btn-primary" type="submit" value="comment ">
+                {% endif %}
+            </div>
+        </form>
+    
+        
+    </div>
+    {% endblock %}
